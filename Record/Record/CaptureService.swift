@@ -42,6 +42,7 @@ public class CaptureService: NSObject, ICaptureService {
     private var captureState = CaptureState.idle
     private var _time: Double = 0
     private var fileName: String = "INCOHEARENTvideo.mov"
+    private var isNextAudioFrame: Bool = false
     
     public var videoFileURL: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -300,21 +301,27 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
     }
     
     func appendSampleBufer(timestamp: Double, sampleBuffer: CMSampleBuffer, output: AVCaptureOutput) {
-        if output == videoOutput, assetVideoWriterInput?.isReadyForMoreMediaData == true {
-            let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        if output == audioOutput {
+            isNextAudioFrame = true
+        }
+        if output == videoOutput,
+            assetVideoWriterInput?.isReadyForMoreMediaData == true,
+            !isNextAudioFrame {
+                let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
 
-            guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-                return
-            }
-            let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) ?? pixelBuffer
-            adapter?.append(resPixelBuffer, withPresentationTime: time)
-            let image = convert(resPixelBuffer)
-            
-            DispatchQueue.main.async {[weak self] in
-                self?.delegate?.imageStream(image)
-            }
-        } else if output == audioOutput, assertAudioWriterInput?.isReadyForMoreMediaData == true {
-            assertAudioWriterInput?.append(sampleBuffer)
+                guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+                    return
+                }
+                if let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) {
+                    adapter?.append(resPixelBuffer, withPresentationTime: time)
+                } else {
+                    adapter?.append(pixelBuffer, withPresentationTime: time)
+                }
+            isNextAudioFrame = true
+        } else if output == audioOutput,
+            assertAudioWriterInput?.isReadyForMoreMediaData == true {
+                assertAudioWriterInput?.append(sampleBuffer)
+                isNextAudioFrame = false
         }
     }
 }
