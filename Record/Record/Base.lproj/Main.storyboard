@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Rdi-wO-Gbb">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--CaptureVC-->
+        <scene sceneID="LOi-pu-WTr">
+            <objects>
+                <viewController id="Rdi-wO-Gbb" customClass="CaptureVC" customModule="Record" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fkE-Hh-V21">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1wz-45-ZmZ" customClass="PreviewView" customModule="Record" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44" width="414" height="738"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YPS-8K-e8J">
+                                <rect key="frame" x="0.0" y="44" width="414" height="738"/>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="KKX-pG-Mhw">
+                                <rect key="frame" x="0.0" y="782" width="414" height="80"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Yts-RK-4Ba">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="MKR-Xe-Q5W"/>
+                                        </constraints>
+                                        <state key="normal" image="icon-record"/>
+                                        <state key="selected" image="stop.circle" catalog="system"/>
+                                        <connections>
+                                            <action selector="startStopTouched:" destination="Rdi-wO-Gbb" eventType="touchUpInside" id="smZ-r4-5cN"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aw7-OI-Jxp">
+                                        <rect key="frame" x="0.0" y="40" width="414" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="PyE-gP-AKh"/>
+                                        </constraints>
+                                        <state key="normal" title="Player">
+                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="playVideo:" destination="Rdi-wO-Gbb" eventType="touchUpInside" id="sVc-Ul-fYa"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="KKX-pG-Mhw" firstAttribute="top" secondItem="1wz-45-ZmZ" secondAttribute="bottom" id="D4R-nR-fgs"/>
+                            <constraint firstItem="1wz-45-ZmZ" firstAttribute="leading" secondItem="G2W-zZ-oto" secondAttribute="leading" id="OHU-5g-AxR"/>
+                            <constraint firstItem="1wz-45-ZmZ" firstAttribute="top" secondItem="G2W-zZ-oto" secondAttribute="top" id="QiM-4c-btI"/>
+                            <constraint firstItem="YPS-8K-e8J" firstAttribute="leading" secondItem="G2W-zZ-oto" secondAttribute="leading" id="SjA-gG-8b3"/>
+                            <constraint firstItem="KKX-pG-Mhw" firstAttribute="top" secondItem="YPS-8K-e8J" secondAttribute="bottom" id="aM9-81-CrW"/>
+                            <constraint firstItem="G2W-zZ-oto" firstAttribute="trailing" secondItem="KKX-pG-Mhw" secondAttribute="trailing" id="bAg-M2-Y8M"/>
+                            <constraint firstItem="G2W-zZ-oto" firstAttribute="trailing" secondItem="YPS-8K-e8J" secondAttribute="trailing" id="hyx-SP-aP0"/>
+                            <constraint firstItem="YPS-8K-e8J" firstAttribute="top" secondItem="G2W-zZ-oto" secondAttribute="top" id="pG8-X8-yXJ"/>
+                            <constraint firstItem="KKX-pG-Mhw" firstAttribute="leading" secondItem="G2W-zZ-oto" secondAttribute="leading" id="qlz-PZ-chq"/>
+                            <constraint firstItem="G2W-zZ-oto" firstAttribute="trailing" secondItem="1wz-45-ZmZ" secondAttribute="trailing" id="wtT-rN-L1l"/>
+                            <constraint firstItem="G2W-zZ-oto" firstAttribute="bottom" secondItem="KKX-pG-Mhw" secondAttribute="bottom" id="y5M-wD-mqw"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="G2W-zZ-oto"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="YPS-8K-e8J" id="vcB-BR-E89"/>
+                        <outlet property="previewView" destination="1wz-45-ZmZ" id="3hk-tx-48S"/>
+                        <outlet property="startStopRecord" destination="Yts-RK-4Ba" id="faq-8D-RPO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="843-Oi-v4q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="45" y="434"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="icon-record" width="30" height="30"/>
+        <image name="stop.circle" catalog="system" width="128" height="121"/>
+    </resources>
+</document>
