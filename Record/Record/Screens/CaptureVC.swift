@@ -46,6 +46,17 @@ class CaptureVC: UIViewController {
     }
 }
 
+extension CaptureVC {
+    func openPlayer(_ videoURL: URL) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "CaptureVC") as? CaptureVC else {
+            return
+        }
+        show(vc, sender: self)
+    }
+}
+
 extension CaptureVC: CaptureServiceDelegate {
     func imageStream(_ image: UIImage) {
         imageView.image = image

@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Rdi-wO-Gbb">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -78,9 +78,56 @@
             </objects>
             <point key="canvasLocation" x="45" y="434"/>
         </scene>
+        <!--Video PlayerVC-->
+        <scene sceneID="7KY-Jd-5DR">
+            <objects>
+                <viewController storyboardIdentifier="VideoPlayerVC" id="fdC-tM-jyi" customClass="VideoPlayerVC" customModule="Record" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="w3Q-zP-vaW">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jfj-0b-S5C" customClass="PlayerView" customModule="Record" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ItD-sL-fLT">
+                                <rect key="frame" x="0.0" y="812" width="414" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="0Ap-Nn-kHt"/>
+                                </constraints>
+                                <state key="normal" image="play" catalog="system"/>
+                                <state key="selected" image="pause.fill" catalog="system"/>
+                                <connections>
+                                    <action selector="playPauseTouched:" destination="fdC-tM-jyi" eventType="touchUpInside" id="KPv-G2-Hwm"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="dhY-Df-dAd" firstAttribute="bottom" secondItem="Jfj-0b-S5C" secondAttribute="bottom" id="Msa-sc-ino"/>
+                            <constraint firstItem="dhY-Df-dAd" firstAttribute="trailing" secondItem="ItD-sL-fLT" secondAttribute="trailing" id="SRw-2W-xQj"/>
+                            <constraint firstItem="ItD-sL-fLT" firstAttribute="leading" secondItem="dhY-Df-dAd" secondAttribute="leading" id="XUL-GR-1Yb"/>
+                            <constraint firstItem="dhY-Df-dAd" firstAttribute="bottom" secondItem="ItD-sL-fLT" secondAttribute="bottom" id="l20-YO-5jF"/>
+                            <constraint firstItem="Jfj-0b-S5C" firstAttribute="leading" secondItem="dhY-Df-dAd" secondAttribute="leading" id="mEc-vS-Oy4"/>
+                            <constraint firstItem="dhY-Df-dAd" firstAttribute="trailing" secondItem="Jfj-0b-S5C" secondAttribute="trailing" id="mRg-5U-OMs"/>
+                            <constraint firstItem="Jfj-0b-S5C" firstAttribute="top" secondItem="dhY-Df-dAd" secondAttribute="top" id="tbh-0v-vZW"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="dhY-Df-dAd"/>
+                    </view>
+                    <connections>
+                        <outlet property="playPauseButton" destination="ItD-sL-fLT" id="7Rc-gN-FiS"/>
+                        <outlet property="previewView" destination="Jfj-0b-S5C" id="Xbf-S7-fGF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VJt-Yo-Tyv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="882.60869565217399" y="431.91964285714283"/>
+        </scene>
     </scenes>
     <resources>
         <image name="icon-record" width="30" height="30"/>
+        <image name="pause.fill" catalog="system" width="116" height="128"/>
+        <image name="play" catalog="system" width="120" height="128"/>
         <image name="stop.circle" catalog="system" width="128" height="121"/>
     </resources>
 </document>

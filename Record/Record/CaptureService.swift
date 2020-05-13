@@ -314,6 +314,11 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
                 }
                 if let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) {
                     adapter?.append(resPixelBuffer, withPresentationTime: time)
+                    let image = convert(resPixelBuffer)
+                    
+                    DispatchQueue.main.async {[weak self] in
+                        self?.delegate?.imageStream(image)
+                    }
                 } else {
                     adapter?.append(pixelBuffer, withPresentationTime: time)
                 }
