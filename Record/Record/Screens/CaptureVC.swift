@@ -24,8 +24,6 @@ class CaptureVC: UIViewController {
         captureService.setup()
         captureService.setupDelegate(self)
         captureService.overlayImage = #imageLiteral(resourceName: "virus")
-        let weekday = Calendar.current.component(.weekday, from: Date())
-        print(weekday)
     }
     
     // MARK: - Action
@@ -42,7 +40,7 @@ class CaptureVC: UIViewController {
     }
     
     @IBAction func playVideo(_ sender: Any) {
-        
+        openPlayer(captureService.videoFileURL)
     }
 }
 
@@ -50,9 +48,10 @@ extension CaptureVC {
     func openPlayer(_ videoURL: URL) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
-        guard let vc = storyboard.instantiateViewController(withIdentifier: "CaptureVC") as? CaptureVC else {
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "VideoPlayerVC") as? VideoPlayerVC else {
             return
         }
+        vc.videoURL = videoURL
         show(vc, sender: self)
     }
 }

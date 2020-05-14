@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF9261AD246C2680009E6310 /* VideoPlayerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9261AC246C2680009E6310 /* VideoPlayerVC.swift */; };
 		CF9261AF246C3304009E6310 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9261AE246C3304009E6310 /* PlayerView.swift */; };
+		CFD57F87246D3BC1005E1B25 /* StreamingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD57F86246D3BC1005E1B25 /* StreamingBuffer.swift */; };
 		E0182D47243CB7CB00D4381D /* CaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0182D46243CB7CB00D4381D /* CaptureService.swift */; };
 		E0182D4A243CBAF800D4381D /* CaptureVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0182D49243CBAF800D4381D /* CaptureVC.swift */; };
 		E031DE4524372D0300495668 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E031DE4424372D0300495668 /* AppDelegate.swift */; };
@@ -46,6 +47,7 @@
 /* Begin PBXFileReference section */
 		CF9261AC246C2680009E6310 /* VideoPlayerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerVC.swift; sourceTree = "<group>"; };
 		CF9261AE246C3304009E6310 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		CFD57F86246D3BC1005E1B25 /* StreamingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingBuffer.swift; sourceTree = "<group>"; };
 		E0182D46243CB7CB00D4381D /* CaptureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureService.swift; sourceTree = "<group>"; };
 		E0182D49243CBAF800D4381D /* CaptureVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureVC.swift; sourceTree = "<group>"; };
 		E031DE4124372D0300495668 /* Record.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Record.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -157,6 +159,7 @@
 				E031DE4F24372D0600495668 /* LaunchScreen.storyboard */,
 				E031DE5224372D0600495668 /* Info.plist */,
 				E0182D46243CB7CB00D4381D /* CaptureService.swift */,
+				CFD57F86246D3BC1005E1B25 /* StreamingBuffer.swift */,
 			);
 			path = Record;
 			sourceTree = "<group>";
@@ -311,6 +314,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0182D47243CB7CB00D4381D /* CaptureService.swift in Sources */,
+				CFD57F87246D3BC1005E1B25 /* StreamingBuffer.swift in Sources */,
 				E031DE4924372D0300495668 /* ViewController.swift in Sources */,
 				E086EDFA243A13AC00E57BF5 /* ViewController2.swift in Sources */,
 				CF9261AF246C3304009E6310 /* PlayerView.swift in Sources */,

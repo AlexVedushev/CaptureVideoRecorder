@@ -43,6 +43,7 @@ public class CaptureService: NSObject, ICaptureService {
     private var _time: Double = 0
     private var fileName: String = "INCOHEARENTvideo.mov"
     private var isNextAudioFrame: Bool = false
+    private var streamingBuffer = StreamingBuffer()
     
     public var videoFileURL: URL {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -204,7 +205,7 @@ public class CaptureService: NSObject, ICaptureService {
         
         let assertVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoInputSettings)
         assertVideoInput.expectsMediaDataInRealTime = true
-        assertVideoInput.transform = CGAffineTransform(rotationAngle: .pi / 2)
+//        assertVideoInput.transform = CGAffineTransform(rotationAngle: .pi / 2)
         let adapter = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: assertVideoInput,
                                                            sourcePixelBufferAttributes: videoInputSettings)
         
@@ -273,7 +274,7 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
             captureState = .capturing
             _time = timestamp
         case .capturing:
-            appendSampleBufer(timestamp: timestamp, sampleBuffer: sampleBuffer, output: output)
+            appendSampleBufer(sampleBuffer: sampleBuffer, output: output)
         case .end:
             guard assetVideoWriterInput?.isReadyForMoreMediaData == true,
                 assertAudioWriterInput?.isReadyForMoreMediaData == true,
@@ -300,33 +301,37 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
         }
     }
     
-    func appendSampleBufer(timestamp: Double, sampleBuffer: CMSampleBuffer, output: AVCaptureOutput) {
-        if output == audioOutput {
-            isNextAudioFrame = true
-        }
-        if output == videoOutput,
-            assetVideoWriterInput?.isReadyForMoreMediaData == true,
-            !isNextAudioFrame {
-                let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-
-                guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-                    return
-                }
-                if let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) {
-                    adapter?.append(resPixelBuffer, withPresentationTime: time)
-                    let image = convert(resPixelBuffer)
-                    
-                    DispatchQueue.main.async {[weak self] in
-                        self?.delegate?.imageStream(image)
-                    }
-                } else {
-                    adapter?.append(pixelBuffer, withPresentationTime: time)
-                }
-            isNextAudioFrame = true
-        } else if output == audioOutput,
-            assertAudioWriterInput?.isReadyForMoreMediaData == true {
-                assertAudioWriterInput?.append(sampleBuffer)
-                isNextAudioFrame = false
-        }
+//    func appendSampleBufer(sampleBuffer: CMSampleBuffer, output: AVCaptureOutput) {
+//        if output == audioOutput {
+//            isNextAudioFrame = true
+//        }
+//        if output == videoOutput,
+//            assetVideoWriterInput?.isReadyForMoreMediaData == true,
+//            !isNextAudioFrame {
+//                let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+//
+//                guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+//                    return
+//                }
+//                if let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) {
+//                    adapter?.append(resPixelBuffer, withPresentationTime: time)
+//                    let image = convert(resPixelBuffer)
+//
+//                    DispatchQueue.main.async {[weak self] in
+//                        self?.delegate?.imageStream(image)
+//                    }
+//                } else {
+//                    adapter?.append(pixelBuffer, withPresentationTime: time)
+//                }
+//            isNextAudioFrame = true
+//        } else if output == audioOutput,
+//            assertAudioWriterInput?.isReadyForMoreMediaData == true {
+//                assertAudioWriterInput?.append(sampleBuffer)
+//                isNextAudioFrame = false
+//        }
+//    }
+    func appendSampleBufer(sampleBuffer: CMSampleBuffer, output: AVCaptureOutput) {
+        streamingBuffer.appendSample(isSound: output == audioOutput, sample: sampleBuffer)
     }
+    
 }
