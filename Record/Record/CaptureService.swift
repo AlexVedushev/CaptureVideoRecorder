@@ -117,9 +117,7 @@ public class CaptureService: NSObject, ICaptureService {
             session.canAddOutput(videoOutput),
             session.canAddOutput(audioOutput) else { return }
         videoOutput.setSampleBufferDelegate(self, queue: sampleBufferQueue)
-//        audioOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.yusuke024.video1"))
         audioOutput.setSampleBufferDelegate(self, queue: sampleBufferQueue)
-//        videoOutput.alwaysDiscardsLateVideoFrames = true
         
         session.beginConfiguration()
         session.addOutput(videoOutput)
@@ -262,21 +260,18 @@ public class CaptureService: NSObject, ICaptureService {
         }
     }
     
-    fileprivate var isRequestMediaDataWhenReady: Bool = false
     fileprivate let requestMediaDataQueue = DispatchQueue(label: "requestMediaDataQueue")
     
     fileprivate func writeNextSampleFromBuffer() {
         guard
             !streamingBuffer.isEmpty,
-            isRequestMediaDataWhenReady == false,
-            let isNextSound = streamingBuffer.isNextSound,
+            let isSoundSample = streamingBuffer.isNextSampleSound,
             let sample = streamingBuffer.getNextSample() else {
             return
         }
         
-        if isNextSound {
+        if isSoundSample {
             if assertAudioWriterInput?.isReadyForMoreMediaData == true {
-//                print("write sound")
                 assertAudioWriterInput?.append(sample)
             }
         } else {
@@ -286,7 +281,6 @@ public class CaptureService: NSObject, ICaptureService {
             let time = CMSampleBufferGetPresentationTimeStamp(sample)
             
             if assetVideoWriterInput?.isReadyForMoreMediaData == true {
-//                print("write video")
                 adapter?.append(resPixelBuffer, withPresentationTime: time)
                 delegetePixelBuffer(resPixelBuffer)
             }

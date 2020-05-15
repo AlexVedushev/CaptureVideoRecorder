@@ -14,7 +14,7 @@ class StreamingBuffer {
     
     private let queue = DispatchQueue(label: "VideoBuffer")
     
-    var isNextSound: Bool? {
+    var isNextSampleSound: Bool? {
         sampleArray.first?.isSound
     }
     
