@@ -18,12 +18,17 @@ class StreamingBuffer {
         sampleArray.first?.isSound
     }
     
+    var isEmpty: Bool {
+        sampleArray.isEmpty
+    }
+    
     func appendSample(isSound: Bool, sample: CMSampleBuffer) {
         sampleArray.append(StreamingSample(isSound: isSound, sample: sample))
     }
     
     func getNextSample() -> CMSampleBuffer? {
-        sampleArray.removeFirst().sample
+        let sample = sampleArray.removeFirst().sample
+        return sample
     }
     
     struct StreamingSample {

@@ -39,6 +39,7 @@ public class CaptureService: NSObject, ICaptureService {
     private var assertAudioWriterInput: AVAssetWriterInput?
     private var adapter: AVAssetWriterInputPixelBufferAdaptor?
     
+    private let sampleBufferQueue = DispatchQueue(label: "com.yusuke024.video", qos: .userInitiated)
     private var captureState = CaptureState.idle
     private var _time: Double = 0
     private var fileName: String = "INCOHEARENTvideo.mov"
@@ -103,6 +104,7 @@ public class CaptureService: NSObject, ICaptureService {
             let videoInput = try? AVCaptureDeviceInput(device: videoDevice),
             let audioInput = try? AVCaptureDeviceInput(device: audioDevice),
             session.canAddInput(videoInput) && session.canAddInput(audioInput) else { return }
+        session.automaticallyConfiguresApplicationAudioSession = true
         session.beginConfiguration()
         session.addInput(videoInput)
         session.addInput(audioInput)
@@ -114,9 +116,11 @@ public class CaptureService: NSObject, ICaptureService {
         guard
             session.canAddOutput(videoOutput),
             session.canAddOutput(audioOutput) else { return }
-        let queue = DispatchQueue(label: "com.yusuke024.video")
-        videoOutput.setSampleBufferDelegate(self, queue: queue)
-        audioOutput.setSampleBufferDelegate(self, queue: queue)
+        videoOutput.setSampleBufferDelegate(self, queue: sampleBufferQueue)
+//        audioOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.yusuke024.video1"))
+        audioOutput.setSampleBufferDelegate(self, queue: sampleBufferQueue)
+//        videoOutput.alwaysDiscardsLateVideoFrames = true
+        
         session.beginConfiguration()
         session.addOutput(videoOutput)
         session.addOutput(audioOutput)
@@ -232,7 +236,7 @@ public class CaptureService: NSObject, ICaptureService {
         self.adapter = adapter
     }
     
-    fileprivate func convert(_ pixelBuffer: CVImageBuffer) -> UIImage {
+    fileprivate func convert(_ pixelBuffer: CVPixelBuffer) -> UIImage {
         let attachmentMode = CMAttachmentMode(kCMAttachmentMode_ShouldPropagate)
         let attachments = CMCopyDictionaryOfAttachments(allocator: kCFAllocatorDefault,
                                                         target: pixelBuffer,
@@ -258,6 +262,45 @@ public class CaptureService: NSObject, ICaptureService {
         }
     }
     
+    fileprivate var isRequestMediaDataWhenReady: Bool = false
+    fileprivate let requestMediaDataQueue = DispatchQueue(label: "requestMediaDataQueue")
+    
+    fileprivate func writeNextSampleFromBuffer() {
+        guard
+            !streamingBuffer.isEmpty,
+            isRequestMediaDataWhenReady == false,
+            let isNextSound = streamingBuffer.isNextSound,
+            let sample = streamingBuffer.getNextSample() else {
+            return
+        }
+        
+        if isNextSound {
+            if assertAudioWriterInput?.isReadyForMoreMediaData == true {
+//                print("write sound")
+                assertAudioWriterInput?.append(sample)
+            }
+        } else {
+            guard
+                let pixelBuffer = CMSampleBufferGetImageBuffer(sample),
+                let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) else { return }
+            let time = CMSampleBufferGetPresentationTimeStamp(sample)
+            
+            if assetVideoWriterInput?.isReadyForMoreMediaData == true {
+//                print("write video")
+                adapter?.append(resPixelBuffer, withPresentationTime: time)
+                delegetePixelBuffer(resPixelBuffer)
+            }
+        }
+    }
+    
+    fileprivate func delegetePixelBuffer(_ pixelBuffer: CVPixelBuffer) {
+        let image = convert(pixelBuffer)
+        
+        DispatchQueue.main.async {[weak self] in
+            self?.delegate?.imageStream(image)
+        }
+    }
+    
     private enum CaptureState {
         case idle, start, capturing, end
     }
@@ -276,11 +319,11 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
         case .capturing:
             appendSampleBufer(sampleBuffer: sampleBuffer, output: output)
         case .end:
-            guard assetVideoWriterInput?.isReadyForMoreMediaData == true,
+            guard
+                streamingBuffer.isEmpty,
+                assetVideoWriterInput?.isReadyForMoreMediaData == true,
                 assertAudioWriterInput?.isReadyForMoreMediaData == true,
-                assetWriter?.status != .failed else {
-                    break
-            }
+                assetWriter?.status != .failed else { break }
             assetVideoWriterInput?.markAsFinished()
             assertAudioWriterInput?.markAsFinished()
             let url = videoFileURL
@@ -291,6 +334,7 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
                 self?.assetVideoWriterInput = nil
                 self?.assertAudioWriterInput = nil
                 self?.captureSession.stopRunning()
+                self?.captureSession = nil
 
                 DispatchQueue.main.async {[weak self] in
                     self?.delegate?.finishWriting(url)
@@ -301,37 +345,16 @@ extension CaptureService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptur
         }
     }
     
-//    func appendSampleBufer(sampleBuffer: CMSampleBuffer, output: AVCaptureOutput) {
-//        if output == audioOutput {
-//            isNextAudioFrame = true
-//        }
-//        if output == videoOutput,
-//            assetVideoWriterInput?.isReadyForMoreMediaData == true,
-//            !isNextAudioFrame {
-//                let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-//
-//                guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-//                    return
-//                }
-//                if let resPixelBuffer = drawOverlay(pixelBuffer: pixelBuffer) {
-//                    adapter?.append(resPixelBuffer, withPresentationTime: time)
-//                    let image = convert(resPixelBuffer)
-//
-//                    DispatchQueue.main.async {[weak self] in
-//                        self?.delegate?.imageStream(image)
-//                    }
-//                } else {
-//                    adapter?.append(pixelBuffer, withPresentationTime: time)
-//                }
-//            isNextAudioFrame = true
-//        } else if output == audioOutput,
-//            assertAudioWriterInput?.isReadyForMoreMediaData == true {
-//                assertAudioWriterInput?.append(sampleBuffer)
-//                isNextAudioFrame = false
-//        }
-//    }
     func appendSampleBufer(sampleBuffer: CMSampleBuffer, output: AVCaptureOutput) {
         streamingBuffer.appendSample(isSound: output == audioOutput, sample: sampleBuffer)
+        
+        if output == audioOutput {
+            print("audio")
+        } else {
+            print("video")
+        }
+        requestMediaDataQueue.async {[weak self] in
+            self?.writeNextSampleFromBuffer()
+        }
     }
-    
 }

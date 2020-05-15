@@ -46,12 +46,8 @@ class CaptureVC: UIViewController {
 
 extension CaptureVC {
     func openPlayer(_ videoURL: URL) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        
-        guard let vc = storyboard.instantiateViewController(withIdentifier: "VideoPlayerVC") as? VideoPlayerVC else {
-            return
-        }
-        vc.videoURL = videoURL
+        let vc = AVPlayerViewController()
+        vc.player = AVPlayer(url: captureService.videoFileURL)
         show(vc, sender: self)
     }
 }
